@@ -114,12 +114,12 @@ export const doctorsTable = pgTable("doctors", {
     .references(() => clinicsTable.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   avatarImageUrl: text("avatar_image_url"),
-  // 1 -  Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday, 0 - Sunday
-  availableFromWeekday: integer("available_from_weekday").notNull(), // 1
-  availableToWeekday: integer("available_to_weekday").notNull(), // 5
+  // 1 - Monday, 2 - Tuesday, 3 - Wednesday, 4 - Thursday, 5 - Friday, 6 - Saturday, 0 - Sunday
+  availableFromWeekDay: integer("available_from_week_day").notNull(),
+  availableToWeekDay: integer("available_to_week_day").notNull(),
   availableFromTime: time("available_from_time").notNull(),
   availableToTime: time("available_to_time").notNull(),
-  speciality: text("speciality").notNull(),
+  specialty: text("specialty").notNull(),
   appointmentPriceInCents: integer("appointment_price_in_cents").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -137,8 +137,6 @@ export const doctorsTableRelations = relations(
     appointments: many(appointmentsTable),
   }),
 );
-
-//enum
 
 export const patientSexEnum = pgEnum("patient_sex", ["male", "female"]);
 
@@ -159,7 +157,7 @@ export const patientsTable = pgTable("patients", {
 
 export const patientsTableRelations = relations(
   patientsTable,
-  ({ many, one }) => ({
+  ({ one, many }) => ({
     clinic: one(clinicsTable, {
       fields: [patientsTable.clinicId],
       references: [clinicsTable.id],
@@ -173,13 +171,13 @@ export const appointmentsTable = pgTable("appointments", {
   date: timestamp("date").notNull(),
   clinicId: uuid("clinic_id")
     .notNull()
-    .references(() => clinicsTable.id),
+    .references(() => clinicsTable.id, { onDelete: "cascade" }),
   patientId: uuid("patient_id")
     .notNull()
-    .references(() => patientsTable.id),
+    .references(() => patientsTable.id, { onDelete: "cascade" }),
   doctorId: uuid("doctor_id")
     .notNull()
-    .references(() => doctorsTable.id),
+    .references(() => doctorsTable.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
